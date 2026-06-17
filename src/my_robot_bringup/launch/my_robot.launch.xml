@@ -1,0 +1,78 @@
+<launch>
+    <set_env name="GZ_SIM_RESOURCE_PATH" value="$(find-pkg-share my_robot_bringup)/models" />
+
+    <let name="urdf_path"
+         value="$(find-pkg-share my_robot_description)/urdf/my_robot.urdf.xacro" />
+    <let name="gazebo_config_path" 
+         value="$(find-pkg-share my_robot_bringup)/config/gazebo_bridge.yaml" />
+    <let name="rviz_config_path"
+         value="$(find-pkg-share my_robot_description)/rviz/urdf_config.rviz" />
+    <let name="nav2_params_path"
+         value="$(find-pkg-share my_robot_bringup)/config/nav2_params.yaml" />
+    <let name="slam_params_path"
+         value="$(find-pkg-share my_robot_bringup)/config/slam_toolbox.yaml" />
+
+    <arg name="use_rviz" default="true" />
+    <arg name="use_slam" default="true" />
+    <arg name="use_nav2" default="true" />
+    <arg name="use_aruco_commands" default="true" />
+
+    <node pkg="robot_state_publisher" exec="robot_state_publisher">
+        <param name="robot_description"
+               value="$(command 'xacro $(var urdf_path)')" />
+        <param name="use_sim_time" value="true" />
+    </node>
+    
+    <arg name="headless" default="true" />
+    
+    <include if="$(var headless)" file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+        <arg name="gz_args" value="-r -s $(find-pkg-share my_robot_bringup)/worlds/my_world.sdf" />
+    </include>
+    <include unless="$(var headless)" file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+        <arg name="gz_args" value="-r $(find-pkg-share my_robot_bringup)/worlds/my_world.sdf" />
+    </include>
+
+    <node pkg="ros_gz_sim" exec="create" args="-topic robot_description" >
+        <param name="use_sim_time" value="false" />
+    </node>
+
+    <node pkg="ros_gz_bridge" exec="parameter_bridge">
+        <param name="config_file"
+            value="$(var gazebo_config_path)" />
+        <param name="use_sim_time" value="false" />
+    </node>
+    <!-- To get compressed images to save bandwidth | type of compressions compressed, theora, zstd -->
+    <node pkg="ros_gz_image" exec="image_bridge" args="/camera/image" >
+        <param name="camera.image.compressed.jpeg_quality" value="75" />
+        <param name="use_sim_time" value="false" />
+    </node>
+    <node pkg="topic_tools" exec="relay" name="relay_camera_info">
+        <param name="input_topic" value="camera/camera_info" />
+        <param name="output_topic" value="camera/image/camera_info" />
+        <param name="use_sim_time" value="false" />
+    </node>
+
+    <include if="$(var use_slam)" file="$(find-pkg-share slam_toolbox)/launch/online_async_launch.py">
+        <arg name="use_sim_time" value="true" />
+        <arg name="slam_params_file" value="$(var slam_params_path)" />
+    </include>
+
+    <include if="$(var use_nav2)" file="$(find-pkg-share nav2_bringup)/launch/navigation_launch.py">
+        <arg name="use_sim_time" value="true" />
+        <arg name="params_file" value="$(var nav2_params_path)" />
+        <arg name="autostart" value="true" />
+    </include>
+
+    <node if="$(var use_aruco_commands)" pkg="my_test_pkg" exec="aruco_command_follower" output="screen">
+        <param name="use_sim_time" value="true" />
+        <param name="show_camera" value="true" />
+        <param name="cooldown_seconds" value="2.0" />
+        <param name="obstacle_stop_distance" value="0.55" />
+        <param name="search_for_markers" value="true" />
+        <param name="search_angular_speed" value="0.25" />
+    </node>
+
+    <node if="$(var use_rviz)" pkg="rviz2" exec="rviz2" args="-d $(var rviz_config_path)" >
+        <param name="use_sim_time" value="true" />
+    </node>
+</launch>

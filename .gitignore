@@ -49,3 +49,9 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+# Colcon (ROS 2) custom files
+install/
+log/
+.colcon/
+__pycache__/
