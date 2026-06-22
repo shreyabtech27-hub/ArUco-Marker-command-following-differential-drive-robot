@@ -33,23 +33,42 @@ class ArucoCommandFollower(Node):
         self.search_angular_speed = self.get_parameter("search_angular_speed").get_parameter_value().double_value
         self.target_marker_id = self.get_parameter("initial_target_id").get_parameter_value().integer_value
 
-        # Waypoints in front of each ArUco marker (x, y, yaw)
+        # Define waypoints in Gazebo world coordinates
         # Positioned 1.6 meters away from the wall centers, facing the markers
-        self.waypoints = {
-            0: (1.72, -2.55, -0.942),     # Waypoint for Marker 0 (wall 1)
-            1: (2.99, 0.97, 0.314),       # Waypoint for Marker 1 (wall 2)
-            2: (0.0, 3.14, 1.571),        # Waypoint for Marker 2 (wall 3)
-            3: (-2.99, 0.97, 2.827),      # Waypoint for Marker 3 (wall 4)
-            4: (-1.72, -2.55, -2.199),    # Waypoint for Marker 4 (wall 5)
+        gazebo_waypoints = {
+            0: (3.0, -0.3, -1.570796),     # Waypoint for Marker 0 (bottom wall right)
+            1: (3.3, 0.0, 0.0),            # Waypoint for Marker 1 (right wall)
+            2: (0.0, 0.3, 1.570796),       # Waypoint for Marker 2 (top wall)
+            3: (-1.8, 0.0, 3.141593),      # Waypoint for Marker 3 (left step wall)
+            4: (-4.0, -0.3, -1.570796),    # Waypoint for Marker 4 (bottom wall left)
         }
+
+        # Robot spawn coordinates in Gazebo world frame
+        spawn_x = 0.0
+        spawn_y = -5.0
+        spawn_yaw = 1.570796
+
+        # Transform waypoints from Gazebo world frame to Map frame (origin at spawn pose)
+        self.waypoints = {}
+        cos_yaw = math.cos(-spawn_yaw)
+        sin_yaw = math.sin(-spawn_yaw)
+        for marker_id, (gx, gy, gyaw) in gazebo_waypoints.items():
+            dx = gx - spawn_x
+            dy = gy - spawn_y
+            mx = dx * cos_yaw - dy * sin_yaw
+            my = dx * sin_yaw + dy * cos_yaw
+            myaw = gyaw - spawn_yaw
+            # Normalize yaw to [-pi, pi]
+            myaw = (myaw + math.pi) % (2 * math.pi) - math.pi
+            self.waypoints[marker_id] = (mx, my, myaw)
 
         # Commands mapped to each ID (representing leading the robot to the next marker/wall)
         self.commands = {
-            0: "Navigate to Wall 2 (Marker 1)",
-            1: "Navigate to Wall 3 (Marker 2)",
-            2: "Navigate to Wall 4 (Marker 3)",
-            3: "Navigate to Wall 5 (Marker 4)",
-            4: "Navigate to Wall 1 (Marker 0)",
+            0: "Navigate to Right Wall (Marker 1)",
+            1: "Navigate to Top Wall (Marker 2)",
+            2: "Navigate to Left Step Wall (Marker 3)",
+            3: "Navigate to Bottom Left Wall (Marker 4)",
+            4: "Navigate to Bottom Right Wall (Marker 0)",
         }
 
         # Next target sequence mapping
@@ -107,9 +126,11 @@ class ArucoCommandFollower(Node):
     def init_timer_callback(self):
         if self.state == "INIT":
             if self.nav_to_pose_client.server_is_ready():
-                self.get_logger().info("Nav2 server is ready. Launching first goal (Marker 2)...")
+                self.get_logger().info("Nav2 server is ready. Driving inside the maze entrance...")
                 self.init_timer.cancel()
-                self.start_navigation_to(self.target_marker_id)
+                self.state = "ENTER_MAZE"
+                self.enter_start_time = time.time()
+                self.enter_duration = 10.0  # seconds to drive forward
             else:
                 self.get_logger().warn("Waiting for Nav2 action server to become available...")
 
@@ -196,8 +217,20 @@ class ArucoCommandFollower(Node):
             self.goal_handle = None
 
     def control_timer_callback(self):
+        # Handle initial maze entry
+        if self.state == "ENTER_MAZE":
+            if time.time() - self.enter_start_time > self.enter_duration:
+                self.get_logger().info("Maze entry complete. Launching first goal (Marker 2)...")
+                twist = Twist()
+                self.cmd_vel_pub.publish(twist)
+                self.start_navigation_to(self.target_marker_id)
+            else:
+                twist = Twist()
+                twist.linear.x = 0.3  # drive forward at 0.3 m/s
+                twist.angular.z = 0.0
+                self.cmd_vel_pub.publish(twist)
         # Publish velocity commands if searching
-        if self.state == "SEARCHING":
+        elif self.state == "SEARCHING":
             twist = Twist()
             twist.angular.z = self.search_angular_speed
             twist.linear.x = 0.0
@@ -233,8 +266,8 @@ class ArucoCommandFollower(Node):
             ids_flat = ids.flatten().tolist()
             
             for marker_id in ids_flat:
-                # Trigger action if we see the current target marker
-                if marker_id == self.target_marker_id:
+                # Trigger action if we see the current target marker and are actively searching
+                if marker_id == self.target_marker_id and self.state == "SEARCHING":
                     now = time.time()
                     if now > self.cooldown_until:
                         self.get_logger().info(f"Target Marker {marker_id} detected!")

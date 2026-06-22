@@ -1,690 +1,362 @@
-<?xml version="1.0"?>
-<sdf version='1.10'>
-
+<?xml version="1.0"?><sdf version='1.10'>
   <world name='aruco_corridor_world'>
-
     <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
-
     <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
-
     <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
-
     <plugin name='gz::sim::systems::Sensors' filename='gz-sim-sensors-system'>
-
       <render_engine>ogre2</render_engine>
-
     </plugin>
 
     <gravity>0 0 -9.8000000000000007</gravity>
-
     <magnetic_field>5.5644999999999998e-06 2.2875799999999999e-05 -4.2388400000000002e-05</magnetic_field>
-
     <atmosphere type='adiabatic'/>
 
     <physics type='ode'>
-
       <max_step_size>0.001</max_step_size>
-
       <real_time_factor>1</real_time_factor>
-
       <real_time_update_rate>1000</real_time_update_rate>
-
     </physics>
 
     <scene>
-
       <ambient>0.400000006 0.400000006 0.400000006 1</ambient>
-
       <background>0.699999988 0.699999988 0.699999988 1</background>
-
       <shadows>true</shadows>
-
     </scene>
 
     <model name='ground_plane'>
-
       <static>true</static>
-
       <link name='link'>
-
         <collision name='collision'>
-
           <geometry>
-
             <plane>
-
               <normal>0 0 1</normal>
-
               <size>60 60</size>
-
             </plane>
-
           </geometry>
-
           <surface>
-
             <friction>
-
               <ode/>
-
             </friction>
-
             <bounce/>
-
             <contact/>
-
           </surface>
-
         </collision>
-
         <visual name='visual'>
-
           <geometry>
-
             <plane>
-
               <normal>0 0 1</normal>
-
               <size>60 60</size>
-
             </plane>
-
           </geometry>
-
           <material>
-
             <ambient>0.75 0.75 0.75 1</ambient>
-
             <diffuse>0.75 0.75 0.75 1</diffuse>
-
           </material>
-
         </visual>
-
         <pose>0 0 0 0 0 0</pose>
-
         <inertial>
-
           <pose>0 0 0 0 0 0</pose>
-
           <mass>1</mass>
-
           <inertia>
-
             <ixx>1</ixx>
-
             <ixy>0</ixy>
-
             <ixz>0</ixz>
-
             <iyy>1</iyy>
-
             <iyz>0</iyz>
-
             <izz>1</izz>
-
           </inertia>
-
         </inertial>
-
         <enable_wind>false</enable_wind>
-
       </link>
-
       <pose>0 0 0 0 0 0</pose>
-
       <self_collide>false</self_collide>
-
     </model>
 
-    <model name='wall_1'>
+    <!-- ==================== OUTER PERIMETER WALLS ==================== -->
 
+    <!-- Top wall (full width) - y=+3 -->
+    <model name='top_wall'>
       <static>true</static>
-
-      <pose>2.8532 -3.9271 1.25 0 0 -0.942478</pose>
-
+      <pose>0.0 3.0 1.25 0 0 0</pose>
       <link name='link'>
-
         <collision name='collision'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
-          <surface>
-
-            <friction>
-
-              <ode/>
-
-            </friction>
-
-            <bounce/>
-
-            <contact/>
-
-          </surface>
-
+          <geometry><box><size>12.0 0.2 2.5</size></box></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface>
         </collision>
-
         <visual name='visual'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
+          <geometry><box><size>12.0 0.2 2.5</size></box></geometry>
           <material>
-
             <ambient>0.65 0.50 0.39 1</ambient>
-
             <diffuse>0.65 0.50 0.39 1</diffuse>
-
           </material>
-
         </visual>
-
         <pose>0 0 0 0 0 0</pose>
-
-        <inertial>
-
-          <pose>0 0 0 0 0 0</pose>
-
-          <mass>1</mass>
-
-          <inertia>
-
-            <ixx>1</ixx>
-
-            <ixy>0</ixy>
-
-            <ixz>0</ixz>
-
-            <iyy>1</iyy>
-
-            <iyz>0</iyz>
-
-            <izz>1</izz>
-
-          </inertia>
-
+        <inertial><pose>0 0 0 0 0 0</pose><mass>1</mass>
+          <inertia><ixx>1</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1</iyy><iyz>0</iyz><izz>1</izz></inertia>
         </inertial>
-
         <enable_wind>false</enable_wind>
-
       </link>
-
       <self_collide>false</self_collide>
-
     </model>
 
-    <include>
+    <!-- Right wall (full height) - x=+6 -->
+    <model name='right_wall'>
+      <static>true</static>
+      <pose>6.0 0.0 1.25 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>0.2 6.0 2.5</size></box></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>0.2 6.0 2.5</size></box></geometry>
+          <material>
+            <ambient>0.65 0.50 0.39 1</ambient>
+            <diffuse>0.65 0.50 0.39 1</diffuse>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial><pose>0 0 0 0 0 0</pose><mass>1</mass>
+          <inertia><ixx>1</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1</iyy><iyz>0</iyz><izz>1</izz></inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <self_collide>false</self_collide>
+    </model>
 
+    <!-- Bottom wall LEFT segment: from x=-6 to x=-1  (5m long, centered at x=-3.5) -->
+    <model name='bottom_wall_left'>
+      <static>true</static>
+      <pose>-3.5 -3.0 1.25 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>5.0 0.2 2.5</size></box></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>5.0 0.2 2.5</size></box></geometry>
+          <material>
+            <ambient>0.65 0.50 0.39 1</ambient>
+            <diffuse>0.65 0.50 0.39 1</diffuse>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial><pose>0 0 0 0 0 0</pose><mass>1</mass>
+          <inertia><ixx>1</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1</iyy><iyz>0</iyz><izz>1</izz></inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <self_collide>false</self_collide>
+    </model>
+
+    <!-- OPENING GAP at bottom: from x=-1 to x=+1  (2m wide) — no wall here -->
+
+    <!-- Bottom wall RIGHT segment: from x=+1 to x=+6  (5m long, centered at x=3.5) -->
+    <model name='bottom_wall_right'>
+      <static>true</static>
+      <pose>3.5 -3.0 1.25 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>5.0 0.2 2.5</size></box></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>5.0 0.2 2.5</size></box></geometry>
+          <material>
+            <ambient>0.65 0.50 0.39 1</ambient>
+            <diffuse>0.65 0.50 0.39 1</diffuse>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial><pose>0 0 0 0 0 0</pose><mass>1</mass>
+          <inertia><ixx>1</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1</iyy><iyz>0</iyz><izz>1</izz></inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <self_collide>false</self_collide>
+    </model>
+
+    <!-- Left wall BOTTOM segment: from y=-3 to y=-0.5  (2.5m, centered at y=-1.75) -->
+    <model name='left_wall_bottom'>
+      <static>true</static>
+      <pose>-6.0 -1.75 1.25 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>0.2 2.5 2.5</size></box></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>0.2 2.5 2.5</size></box></geometry>
+          <material>
+            <ambient>0.65 0.50 0.39 1</ambient>
+            <diffuse>0.65 0.50 0.39 1</diffuse>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial><pose>0 0 0 0 0 0</pose><mass>1</mass>
+          <inertia><ixx>1</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1</iyy><iyz>0</iyz><izz>1</izz></inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <self_collide>false</self_collide>
+    </model>
+
+    <!-- Left wall step bottom: horizontal shelf going inward at y=-0.5 -->
+    <model name='left_wall_step_bottom'>
+      <static>true</static>
+      <pose>-5.25 -0.5 1.25 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>1.5 0.2 2.5</size></box></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>1.5 0.2 2.5</size></box></geometry>
+          <material>
+            <ambient>0.65 0.50 0.39 1</ambient>
+            <diffuse>0.65 0.50 0.39 1</diffuse>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial><pose>0 0 0 0 0 0</pose><mass>1</mass>
+          <inertia><ixx>1</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1</iyy><iyz>0</iyz><izz>1</izz></inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <self_collide>false</self_collide>
+    </model>
+
+    <!-- Left wall step inner: vertical segment from y=-0.5 to y=+0.5 at x=-4.5 -->
+    <model name='left_wall_step_inner'>
+      <static>true</static>
+      <pose>-4.5 0.0 1.25 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>0.2 1.0 2.5</size></box></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>0.2 1.0 2.5</size></box></geometry>
+          <material>
+            <ambient>0.65 0.50 0.39 1</ambient>
+            <diffuse>0.65 0.50 0.39 1</diffuse>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial><pose>0 0 0 0 0 0</pose><mass>1</mass>
+          <inertia><ixx>1</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1</iyy><iyz>0</iyz><izz>1</izz></inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <self_collide>false</self_collide>
+    </model>
+
+    <!-- Left wall step top: horizontal shelf going outward at y=+0.5 -->
+    <model name='left_wall_step_top'>
+      <static>true</static>
+      <pose>-5.25 0.5 1.25 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>1.5 0.2 2.5</size></box></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>1.5 0.2 2.5</size></box></geometry>
+          <material>
+            <ambient>0.65 0.50 0.39 1</ambient>
+            <diffuse>0.65 0.50 0.39 1</diffuse>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial><pose>0 0 0 0 0 0</pose><mass>1</mass>
+          <inertia><ixx>1</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1</iyy><iyz>0</iyz><izz>1</izz></inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <self_collide>false</self_collide>
+    </model>
+
+    <!-- Left wall TOP segment: from y=+0.5 to y=+3  (2.5m, centered at y=1.75) -->
+    <model name='left_wall_top'>
+      <static>true</static>
+      <pose>-6.0 1.75 1.25 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>0.2 2.5 2.5</size></box></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>0.2 2.5 2.5</size></box></geometry>
+          <material>
+            <ambient>0.65 0.50 0.39 1</ambient>
+            <diffuse>0.65 0.50 0.39 1</diffuse>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial><pose>0 0 0 0 0 0</pose><mass>1</mass>
+          <inertia><ixx>1</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1</iyy><iyz>0</iyz><izz>1</izz></inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <self_collide>false</self_collide>
+    </model>
+
+    <!-- ==================== ARUCO MARKERS ==================== -->
+    <!-- Marker 0: on bottom wall (inside face, facing +y) near right side -->
+    <include>
       <uri>file:///home/shreya/trial3_ihub/install/my_robot_bringup/share/my_robot_bringup/models/aruco_marker_0</uri>
-
       <name>aruco_marker_0</name>
-
-      <pose>2.7239 -3.7491 1.0 0 0 2.199115</pose>
-
+      <pose>3.0 -2.8 1.0 0 0 1.570796</pose>
     </include>
 
-    <model name='wall_2'>
-
-      <static>true</static>
-
-      <pose>4.6165 1.5000 1.25 0 0 0.314159</pose>
-
-      <link name='link'>
-
-        <collision name='collision'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
-          <surface>
-
-            <friction>
-
-              <ode/>
-
-            </friction>
-
-            <bounce/>
-
-            <contact/>
-
-          </surface>
-
-        </collision>
-
-        <visual name='visual'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
-          <material>
-
-            <ambient>0.65 0.50 0.39 1</ambient>
-
-            <diffuse>0.65 0.50 0.39 1</diffuse>
-
-          </material>
-
-        </visual>
-
-        <pose>0 0 0 0 0 0</pose>
-
-        <inertial>
-
-          <pose>0 0 0 0 0 0</pose>
-
-          <mass>1</mass>
-
-          <inertia>
-
-            <ixx>1</ixx>
-
-            <ixy>0</ixy>
-
-            <ixz>0</ixz>
-
-            <iyy>1</iyy>
-
-            <iyz>0</iyz>
-
-            <izz>1</izz>
-
-          </inertia>
-
-        </inertial>
-
-        <enable_wind>false</enable_wind>
-
-      </link>
-
-      <self_collide>false</self_collide>
-
-    </model>
-
+    <!-- Marker 1: on right wall (inside face, facing -x) -->
     <include>
-
       <uri>file:///home/shreya/trial3_ihub/install/my_robot_bringup/share/my_robot_bringup/models/aruco_marker_1</uri>
-
       <name>aruco_marker_1</name>
-
-      <pose>4.4073 1.4320 1.0 0 0 -2.827433</pose>
-
+      <pose>5.8 0.0 1.0 0 0 3.141593</pose>
     </include>
 
-    <model name='wall_3'>
-
-      <static>true</static>
-
-      <pose>0.0000 4.8541 1.25 0 0 1.570796</pose>
-
-      <link name='link'>
-
-        <collision name='collision'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
-          <surface>
-
-            <friction>
-
-              <ode/>
-
-            </friction>
-
-            <bounce/>
-
-            <contact/>
-
-          </surface>
-
-        </collision>
-
-        <visual name='visual'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
-          <material>
-
-            <ambient>0.65 0.50 0.39 1</ambient>
-
-            <diffuse>0.65 0.50 0.39 1</diffuse>
-
-          </material>
-
-        </visual>
-
-        <pose>0 0 0 0 0 0</pose>
-
-        <inertial>
-
-          <pose>0 0 0 0 0 0</pose>
-
-          <mass>1</mass>
-
-          <inertia>
-
-            <ixx>1</ixx>
-
-            <ixy>0</ixy>
-
-            <ixz>0</ixz>
-
-            <iyy>1</iyy>
-
-            <iyz>0</iyz>
-
-            <izz>1</izz>
-
-          </inertia>
-
-        </inertial>
-
-        <enable_wind>false</enable_wind>
-
-      </link>
-
-      <self_collide>false</self_collide>
-
-    </model>
-
+    <!-- Marker 2: on top wall (inside face, facing -y) -->
     <include>
-
       <uri>file:///home/shreya/trial3_ihub/install/my_robot_bringup/share/my_robot_bringup/models/aruco_marker_2</uri>
-
       <name>aruco_marker_2</name>
-
-      <pose>0.0000 4.6341 1.0 0 0 -1.570796</pose>
-
+      <pose>0.0 2.8 1.0 0 0 -1.570796</pose>
     </include>
 
-    <model name='wall_4'>
-
-      <static>true</static>
-
-      <pose>-4.6165 1.5000 1.25 0 0 -3.455752</pose>
-
-      <link name='link'>
-
-        <collision name='collision'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
-          <surface>
-
-            <friction>
-
-              <ode/>
-
-            </friction>
-
-            <bounce/>
-
-            <contact/>
-
-          </surface>
-
-        </collision>
-
-        <visual name='visual'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
-          <material>
-
-            <ambient>0.65 0.50 0.39 1</ambient>
-
-            <diffuse>0.65 0.50 0.39 1</diffuse>
-
-          </material>
-
-        </visual>
-
-        <pose>0 0 0 0 0 0</pose>
-
-        <inertial>
-
-          <pose>0 0 0 0 0 0</pose>
-
-          <mass>1</mass>
-
-          <inertia>
-
-            <ixx>1</ixx>
-
-            <ixy>0</ixy>
-
-            <ixz>0</ixz>
-
-            <iyy>1</iyy>
-
-            <iyz>0</iyz>
-
-            <izz>1</izz>
-
-          </inertia>
-
-        </inertial>
-
-        <enable_wind>false</enable_wind>
-
-      </link>
-
-      <self_collide>false</self_collide>
-
-    </model>
-
+    <!-- Marker 3: on left step wall (inside face, facing +x) -->
     <include>
-
       <uri>file:///home/shreya/trial3_ihub/install/my_robot_bringup/share/my_robot_bringup/models/aruco_marker_3</uri>
-
       <name>aruco_marker_3</name>
-
-      <pose>-4.4073 1.4320 1.0 0 0 -0.314159</pose>
-
+      <pose>-4.3 0.0 1.0 0 0 0.0</pose>
     </include>
 
-    <model name='wall_5'>
-
-      <static>true</static>
-
-      <pose>-2.8532 -3.9271 1.25 0 0 -2.199115</pose>
-
-      <link name='link'>
-
-        <collision name='collision'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
-          <surface>
-
-            <friction>
-
-              <ode/>
-
-            </friction>
-
-            <bounce/>
-
-            <contact/>
-
-          </surface>
-
-        </collision>
-
-        <visual name='visual'>
-
-          <geometry>
-
-            <box>
-
-              <size>0.20000000000000001 6 2.5</size>
-
-            </box>
-
-          </geometry>
-
-          <material>
-
-            <ambient>0.65 0.50 0.39 1</ambient>
-
-            <diffuse>0.65 0.50 0.39 1</diffuse>
-
-          </material>
-
-        </visual>
-
-        <pose>0 0 0 0 0 0</pose>
-
-        <inertial>
-
-          <pose>0 0 0 0 0 0</pose>
-
-          <mass>1</mass>
-
-          <inertia>
-
-            <ixx>1</ixx>
-
-            <ixy>0</ixy>
-
-            <ixz>0</ixz>
-
-            <iyy>1</iyy>
-
-            <iyz>0</iyz>
-
-            <izz>1</izz>
-
-          </inertia>
-
-        </inertial>
-
-        <enable_wind>false</enable_wind>
-
-      </link>
-
-      <self_collide>false</self_collide>
-
-    </model>
-
+    <!-- Marker 4: on bottom wall left (inside face, facing +y) near left side -->
     <include>
-
       <uri>file:///home/shreya/trial3_ihub/install/my_robot_bringup/share/my_robot_bringup/models/aruco_marker_4</uri>
-
       <name>aruco_marker_4</name>
-
-      <pose>-2.7239 -3.7491 1.0 0 0 0.942478</pose>
-
+      <pose>-4.0 -2.8 1.0 0 0 1.570796</pose>
     </include>
 
+    <!-- ==================== LIGHTING ==================== -->
     <light name='sun' type='directional'>
-
       <pose>0 0 10 0 0 0</pose>
-
       <cast_shadows>false</cast_shadows>
-
       <intensity>1</intensity>
-
-      <direction>-0.40000000000000002 0.20000000000000001 -1</direction>
-
+      <direction>-0.4 0.2 -1</direction>
       <diffuse>1 1 1 1</diffuse>
-
-      <specular>0.300000012 0.300000012 0.300000012 1</specular>
-
+      <specular>0.3 0.3 0.3 1</specular>
       <attenuation>
-
         <range>10</range>
-
         <linear>1</linear>
-
         <constant>1</constant>
-
         <quadratic>0</quadratic>
-
       </attenuation>
-
       <spot>
-
         <inner_angle>0</inner_angle>
-
         <outer_angle>0</outer_angle>
-
         <falloff>0</falloff>
-
       </spot>
-
     </light>
 
   </world>
-
 </sdf>
