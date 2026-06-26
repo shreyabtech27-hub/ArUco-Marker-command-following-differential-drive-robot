@@ -37,21 +37,22 @@ graph TD
 
 ## 📂 Repository Structure
 
-The workspace consists of the following ROS 2 packages in the `src/` directory:
+This repository is organized into three distinct versions of the project, allowing you to run the robot under different launch configurations and environments:
 
-```text
-src/
-├── my_robot_description/     # URDF/Xacro models, joint configurations & display launch
-│   ├── urdf/                 # Robot links: camera, LiDAR, mobile base, gazebo plugins
-│   └── launch/               # Model visualization display in RViz2
-├── my_robot_bringup/         # Simulation setup, worlds, configurations & main launch
-│   ├── config/               # Nav2, SLAM Toolbox, and Gazebo parameters/bridges
-│   ├── worlds/               # Gazebo Sim world with ArUco markers on walls
-│   └── launch/               # Unified bringup for simulation, SLAM, Nav2, and followers
-├── my_test_pkg/              # Main control package containing the Python nodes
-│   └── my_test_pkg/          # ArUco detection & state machine command follower
-└── turtlesim_mapper/         # Auxiliary plotting utilities
-```
+### 1. Root Directory (XML Launch Version)
+The root `src/` directory contains the original ROS 2 implementation using **XML Launch Files** (`my_robot.launch.xml`) and the original Gazebo world.
+- To run this version, build the root workspace and run:
+  ```bash
+  ros2 launch my_robot_bringup my_robot.launch.xml headless:=false
+  ```
+
+### 2. Python Launch Version (`python_launch_version/`)
+Contains the migrated, fully debugged, and optimized version of the robot using **Python Launch Files** (`my_robot.launch.py`) with the original Gazebo world.
+- Refer to the [Python Launch README](python_launch_version/README.md) for more details.
+
+### 3. New Maze World Version (`maze_world_version/`)
+Contains the Python launch version running in a **New, more complex Maze World** layout, with the robot starting outside the maze, executing an entry sequence, and navigating updated marker locations.
+- Refer to the [New Maze World README](maze_world_version/README.md) for more details.
 
 ---
 
